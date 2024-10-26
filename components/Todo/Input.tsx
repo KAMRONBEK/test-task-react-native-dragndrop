@@ -1,9 +1,28 @@
 import { MaterialIcons } from "@expo/vector-icons";
-import RN from "../RN";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { addAlpha, COLORS } from "../../constants/colors";
+import RN from "../RN";
+import { FC, useCallback, useState } from "react";
+import { SQLiteDatabase, useSQLiteContext } from "expo-sqlite";
+import { todoStore } from "../../store/todo.store";
 
-export default () => {
+type Props = {
+  db: SQLiteDatabase;
+};
+
+const Input: FC<Props> = () => {
+  const [value, setValue] = useState("");
+  const { create } = todoStore;
+  const db = useSQLiteContext();
+
+  const onClearValue = useCallback(() => {
+    setValue("");
+  }, []);
+
+  const onCreateTask = useCallback(async () => {
+    await create({ db, newTask: value }, onClearValue);
+  }, [value, create, onClearValue]);
+
   return (
     <KeyboardAwareScrollView contentContainerStyle={styles.keyboardContainer}>
       <RN.View style={styles.container}>
@@ -14,8 +33,10 @@ export default () => {
           autoCapitalize="none"
           autoComplete="off"
           placeholderTextColor={COLORS.gray}
+          value={value}
+          onChangeText={setValue}
         />
-        <RN.TouchableOpacity style={styles.sendButton}>
+        <RN.TouchableOpacity style={styles.sendButton} onPress={onCreateTask}>
           <MaterialIcons name="send" size={22} color={COLORS.white} />
         </RN.TouchableOpacity>
       </RN.View>
@@ -71,3 +92,5 @@ const styles = RN.StyleSheet.create({
     elevation: 6,
   },
 });
+
+export default Input;

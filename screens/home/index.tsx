@@ -1,12 +1,25 @@
+import { useCallback, useEffect } from "react";
 import { SafeAreaView } from "react-native";
 import RN from "../../components/RN";
 import { TodoInput, TodoList } from "../../components/Todo";
+import { observer } from "mobx-react-lite";
+import { useSQLiteContext } from "expo-sqlite";
+import { todoStore } from "../../store/todo.store";
 
 const HomeScreen = () => {
+  const db = useSQLiteContext();
+
+  const initialize = useCallback(async () => {
+    todoStore.initialize(db);
+  }, []);
+
+  useEffect(() => {
+    initialize();
+  }, []);
   return (
     <SafeAreaView style={styles.safeArea}>
       <RN.View style={styles.container}>
-        <TodoList />
+        <TodoList db={db} />
         <TodoInput />
       </RN.View>
     </SafeAreaView>
@@ -23,4 +36,4 @@ const styles = RN.StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default observer(HomeScreen);

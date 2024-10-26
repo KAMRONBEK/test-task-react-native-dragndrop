@@ -1,8 +1,15 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import { Task } from "../../@types/todo.types";
 import { addAlpha, COLORS } from "../../constants/colors";
 import RN from "../RN";
 
-export default () => {
+type ItemProps = {
+  item: Task;
+  drag: () => void;
+  isActive: boolean;
+};
+
+export default function Item({ drag, isActive, item }: ItemProps) {
   const [isChecked, setIsChecked] = useState(false);
 
   const toggleCheckbox = () => {
@@ -10,16 +17,21 @@ export default () => {
   };
 
   return (
-    <RN.TouchableOpacity style={styles.container} onPress={toggleCheckbox}>
+    <RN.TouchableOpacity
+      style={[styles.container, isActive && styles.activeContainer]} // Change style if active
+      onPress={toggleCheckbox}
+      onLongPress={drag} // Start dragging on long press
+      delayLongPress={100} // Optional: Delay for long press recognition
+    >
       <RN.View style={[styles.checkbox, isChecked && styles.checkedCheckbox]}>
         {isChecked && <RN.Text style={styles.checkmark}>✓</RN.Text>}
       </RN.View>
       <RN.Text style={[styles.text, isChecked && styles.checkedText]}>
-        Item Title
+        {item.name} {/* Display task name from item */}
       </RN.Text>
     </RN.TouchableOpacity>
   );
-};
+}
 
 const styles = RN.StyleSheet.create({
   container: {
@@ -36,6 +48,9 @@ const styles = RN.StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 4,
+  },
+  activeContainer: {
+    backgroundColor: addAlpha(COLORS.gray, 0.1), // Change background color when active
   },
   checkbox: {
     width: 20,
