@@ -10,9 +10,9 @@ export async function initializeDB(db: SQLiteDatabase) {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         created_at DATETIME DEFAULT (datetime('now', 'localtime')),
-        isDone BOOLEAN DEFAULT 0,  -- 0 if not done, 1 if done
-        position INTEGER,          -- Position for ordering tasks in drag and drop
-        UNIQUE (id, position)      -- Unique constraint to ensure unique position index
+        isDone BOOLEAN DEFAULT 0,
+        position INTEGER,  
+        UNIQUE (id, position)
       );
     `);
 
