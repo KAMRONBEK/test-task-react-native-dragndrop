@@ -8,22 +8,23 @@ import {
   updateTaskPosition,
   deleteTask as dbDeleteTask,
   toggleTaskStatus,
+  editTask as dbEditTask,
 } from '../db';
 
 class TodoStore {
-  list: Task[] = [];
+  public list: Task[] = [];
 
   constructor() {
     makeAutoObservable(this);
   }
 
   // Update the task list with a new array
-  updateList(newList: Task[]) {
+  private updateList(newList: Task[]) {
     this.list = newList;
   }
 
   // Initialize the task list from the database
-  initialize = async (db: SQLiteDatabase) => {
+  public initialize = async (db: SQLiteDatabase) => {
     try {
       const tasks = await getTasks(db);
       if (tasks) {
@@ -35,7 +36,7 @@ class TodoStore {
   };
 
   // Create a new task
-  create = async (
+  public create = async (
     { db, newTask }: { db: SQLiteDatabase; newTask: string },
     callback?: () => void,
   ) => {
@@ -55,7 +56,7 @@ class TodoStore {
   };
 
   // Delete a task
-  deleteTask = async (db: SQLiteDatabase, taskId: number) => {
+  public deleteTask = async (db: SQLiteDatabase, taskId: number) => {
     try {
       await dbDeleteTask(db, taskId); // Delete from database
       // Update the list in the store
@@ -66,8 +67,31 @@ class TodoStore {
     }
   };
 
+  // Edit a task
+  public editTask = async (
+    db: SQLiteDatabase,
+    taskId: number,
+    updatedName: string,
+  ) => {
+    if (!updatedName.trim()) {
+      Alert.alert('Oops!', 'Please enter a valid task!');
+      return;
+    }
+
+    try {
+      await dbEditTask(db, taskId, updatedName);
+      const updatedList = this.list.map((task) =>
+        task.id === taskId ? { ...task, name: updatedName } : task,
+      );
+      this.updateList(updatedList);
+    } catch (error) {
+      console.error('[Error-editTask]:', error);
+      Alert.alert('Oops!', 'Failed to edit task. Please try again.');
+    }
+  };
+
   // Toggle the isDone status of a task
-  toggleTask = async (db: SQLiteDatabase, taskId: number) => {
+  public toggleTask = async (db: SQLiteDatabase, taskId: number) => {
     try {
       await toggleTaskStatus(db, taskId); // Update in the database
       // Update the list in the store
@@ -81,7 +105,7 @@ class TodoStore {
   };
 
   // Update task positions in the database after drag-and-drop
-  updateTaskPositions = async (db: SQLiteDatabase, newOrder: Task[]) => {
+  public updateTaskPositions = async (db: SQLiteDatabase, newOrder: Task[]) => {
     this.updateList(newOrder); // Update the list in the store with the new order
 
     try {
