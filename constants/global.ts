@@ -1,5 +1,5 @@
-import { LayoutAnimation } from "react-native";
-import RN from "../components/RN";
+import { LayoutAnimation } from 'react-native';
+import RN from '../components/RN';
 
 export const makeLayoutAnimation = () => {
   LayoutAnimation.easeInEaseOut();
@@ -14,11 +14,11 @@ export const CoreStyle = RN.StyleSheet.create({
   },
   center: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   row: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });

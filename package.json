@@ -6,7 +6,9 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "npm run lint -- --fix"
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.4",
@@ -29,6 +31,15 @@
     "@babel/core": "^7.20.0",
     "@types/lodash": "^4.17.12",
     "@types/react": "~18.2.45",
+    "ajv": "^8.13.0",
+    "eslint": "8",
+    "eslint-config-expo": "^7.1.2",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-import-resolver-typescript": "^3.6.1",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-prettier": "^5.1.3",
+    "eslint-plugin-react-hooks": "^5.1.0-beta-04b058868c-20240508",
+    "prettier": "^3.3.3",
     "typescript": "~5.3.3"
   },
   "private": true

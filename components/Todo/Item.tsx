@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { Task } from "../../@types/todo.types";
-import { addAlpha, COLORS } from "../../constants/colors";
-import RN from "../RN";
+import React, { useState } from 'react';
+import { Task } from '../../@types/todo.types';
+import { addAlpha, COLORS } from '../../constants/colors';
+import RN from '../RN';
 
 type ItemProps = {
   item: Task;
@@ -24,7 +24,7 @@ export default function Item({ drag, isActive, item }: ItemProps) {
       delayLongPress={100} // Optional: Delay for long press recognition
     >
       <RN.View style={[styles.checkbox, isChecked && styles.checkedCheckbox]}>
-        {isChecked && <RN.Text style={styles.checkmark}>✓</RN.Text>}
+        {isChecked && <RN.Text style={styles.checkmark}>{'✓'}</RN.Text>}
       </RN.View>
       <RN.Text style={[styles.text, isChecked && styles.checkedText]}>
         {item.name} {/* Display task name from item */}
@@ -35,8 +35,8 @@ export default function Item({ drag, isActive, item }: ItemProps) {
 
 const styles = RN.StyleSheet.create({
   container: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingVertical: 12,
     paddingHorizontal: 15,
     marginVertical: 6,
@@ -60,8 +60,8 @@ const styles = RN.StyleSheet.create({
     borderWidth: 1.5,
     borderColor: COLORS.gray,
     marginRight: 15,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   checkedCheckbox: {
     backgroundColor: COLORS.orange,
@@ -69,7 +69,7 @@ const styles = RN.StyleSheet.create({
   },
   checkmark: {
     color: COLORS.white,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   text: {
     fontSize: 16,
@@ -77,7 +77,7 @@ const styles = RN.StyleSheet.create({
     flex: 1,
   },
   checkedText: {
-    textDecorationLine: "line-through",
+    textDecorationLine: 'line-through',
     color: COLORS.gray,
   },
 });

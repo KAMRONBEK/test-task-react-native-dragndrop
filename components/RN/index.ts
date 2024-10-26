@@ -18,9 +18,9 @@ import {
   ActivityIndicator,
   Linking,
   RefreshControl,
-} from "react-native";
-import View from "./View";
-import Text from "./Text";
+} from 'react-native';
+import View from './View';
+import Text from './Text';
 
 export default {
   TouchableOpacity,

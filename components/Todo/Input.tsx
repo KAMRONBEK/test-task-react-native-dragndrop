@@ -1,43 +1,39 @@
-import { MaterialIcons } from "@expo/vector-icons";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { addAlpha, COLORS } from "../../constants/colors";
-import RN from "../RN";
-import { FC, useCallback, useState } from "react";
-import { SQLiteDatabase, useSQLiteContext } from "expo-sqlite";
-import { todoStore } from "../../store/todo.store";
+import { MaterialIcons } from '@expo/vector-icons';
+import { useSQLiteContext } from 'expo-sqlite';
+import { useCallback, useState } from 'react';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { addAlpha, COLORS } from '../../constants/colors';
+import { todoStore } from '../../store/todo.store';
+import RN from '../RN';
 
-type Props = {
-  db: SQLiteDatabase;
-};
-
-const Input: FC<Props> = () => {
-  const [value, setValue] = useState("");
+const Input = () => {
+  const [value, setValue] = useState('');
   const { create } = todoStore;
   const db = useSQLiteContext();
 
   const onClearValue = useCallback(() => {
-    setValue("");
+    setValue('');
   }, []);
 
   const onCreateTask = useCallback(async () => {
     await create({ db, newTask: value }, onClearValue);
-  }, [value, create, onClearValue]);
+  }, [create, db, value, onClearValue]);
 
   return (
     <KeyboardAwareScrollView contentContainerStyle={styles.keyboardContainer}>
       <RN.View style={styles.container}>
         <RN.TextInput
-          placeholder="Enter the task"
+          placeholder={'Enter the task'}
           style={styles.input}
           autoCorrect={false}
-          autoCapitalize="none"
-          autoComplete="off"
+          autoCapitalize={'none'}
+          autoComplete={'off'}
           placeholderTextColor={COLORS.gray}
           value={value}
           onChangeText={setValue}
         />
         <RN.TouchableOpacity style={styles.sendButton} onPress={onCreateTask}>
-          <MaterialIcons name="send" size={22} color={COLORS.white} />
+          <MaterialIcons name={'send'} size={22} color={COLORS.white} />
         </RN.TouchableOpacity>
       </RN.View>
     </KeyboardAwareScrollView>
@@ -47,11 +43,11 @@ const Input: FC<Props> = () => {
 const styles = RN.StyleSheet.create({
   keyboardContainer: {
     flex: 1,
-    justifyContent: "flex-end",
+    justifyContent: 'flex-end',
   },
   container: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingVertical: 10,
     paddingHorizontal: 15,
     marginBottom: 20,
@@ -81,8 +77,8 @@ const styles = RN.StyleSheet.create({
     backgroundColor: COLORS.orange,
     padding: 12,
     borderRadius: 25,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     width: 48,
     height: 48,
     shadowColor: addAlpha(COLORS.orange, 0.3),

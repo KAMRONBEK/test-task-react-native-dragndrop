@@ -1,8 +1,8 @@
-import { makeAutoObservable, runInAction } from "mobx";
-import { SQLiteDatabase } from "expo-sqlite";
-import { addTask, getTasks } from "../db";
-import { Task } from "../@types/todo.types";
-import { Alert } from "react-native";
+import { SQLiteDatabase } from 'expo-sqlite';
+import { makeAutoObservable } from 'mobx';
+import { Alert } from 'react-native';
+import { Task } from '../@types/todo.types';
+import { addTask, getTasks } from '../db';
 
 class TodoStore {
   list: Task[] = [];
@@ -24,17 +24,17 @@ class TodoStore {
         this.updateList(tasks);
       }
     } catch (error) {
-      console.error("[Error-initialize]:", error);
+      console.error('[Error-initialize]:', error);
     }
   };
 
   // Create a new task
   create = async (
     { db, newTask }: { db: SQLiteDatabase; newTask: string },
-    callback?: () => void
+    callback?: () => void,
   ) => {
     if (!newTask.trim()) {
-      Alert.alert("Oops!", "Please enter a valid task!");
+      Alert.alert('Oops!', 'Please enter a valid task!');
       return;
     }
 
@@ -43,8 +43,8 @@ class TodoStore {
       await this.initialize(db);
       callback?.(); // Call the optional callback if provided
     } catch (error) {
-      console.error("[Error-create]:", error);
-      Alert.alert("Opps!", "Failed to create task. Please try again.");
+      console.error('[Error-create]:', error);
+      Alert.alert('Opps!', 'Failed to create task. Please try again.');
     }
   };
 }
