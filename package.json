@@ -9,13 +9,20 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo/vector-icons": "^14.0.4",
     "expo": "~51.0.28",
+    "expo-sqlite": "^14.0.6",
     "expo-status-bar": "~1.12.1",
+    "lodash": "^4.17.21",
     "react": "18.2.0",
-    "react-native": "0.74.5"
+    "react-native": "0.74.5",
+    "react-native-keyboard-aware-scroll-view": "^0.9.5",
+    "react-native-paper": "^5.12.5",
+    "react-native-safe-area-context": "^4.12.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@types/lodash": "^4.17.12",
     "@types/react": "~18.2.45",
     "typescript": "^5.1.3"
   },
