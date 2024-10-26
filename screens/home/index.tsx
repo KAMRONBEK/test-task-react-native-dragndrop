@@ -5,6 +5,7 @@ import { TodoInput, TodoList } from '../../components/Todo';
 import { observer } from 'mobx-react-lite';
 import { useSQLiteContext } from 'expo-sqlite';
 import { todoStore } from '../../store/todo.store';
+import { isAndroid } from '../../constants/platform';
 
 const HomeScreen = () => {
   const db = useSQLiteContext();
@@ -38,6 +39,9 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    ...(isAndroid && {
+      paddingTop: 30,
+    }),
   },
 });
 

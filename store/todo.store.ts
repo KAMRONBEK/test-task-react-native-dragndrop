@@ -10,6 +10,7 @@ import {
   toggleTaskStatus,
   editTask as dbEditTask,
 } from '../db';
+import { find } from 'lodash';
 
 class TodoStore {
   public list: Task[] = [];
@@ -102,6 +103,12 @@ class TodoStore {
     } catch (error) {
       console.error('[Error-toggleTask]:', error);
     }
+  };
+
+  public findOneTask = (taskId: number) => {
+    const result = find(this.list, { id: taskId });
+
+    return !result ? null : result;
   };
 
   // Update task positions in the database after drag-and-drop

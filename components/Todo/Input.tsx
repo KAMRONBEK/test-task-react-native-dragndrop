@@ -20,7 +20,10 @@ const Input = () => {
   }, [create, db, value, onClearValue]);
 
   return (
-    <KeyboardAwareScrollView contentContainerStyle={styles.keyboardContainer}>
+    <KeyboardAwareScrollView
+      keyboardShouldPersistTaps={'handled'}
+      contentContainerStyle={styles.keyboardContainer}
+    >
       <RN.View style={styles.container}>
         <RN.TextInput
           placeholder={'Enter the task'}
@@ -42,8 +45,8 @@ const Input = () => {
 
 const styles = RN.StyleSheet.create({
   keyboardContainer: {
-    flex: 1,
     justifyContent: 'flex-end',
+    flex: 1,
   },
   container: {
     flexDirection: 'row',

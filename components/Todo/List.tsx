@@ -6,16 +6,21 @@ import RN from '../RN';
 import Item from './Item';
 import { Task } from '../../@types/todo.types';
 import { useSQLiteContext } from 'expo-sqlite';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { Swipeable } from 'react-native-gesture-handler';
 import { Alert } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 import { COLORS } from '../../constants/colors';
 import { normalizeWidth } from '../../constants/dimensions';
+import useVisibility from '../../hooks/useVisibility';
+import Modal from './Modal';
 
 const TodoList = () => {
-  const data = toJS(todoStore.list);
   const db = useSQLiteContext();
+  const data = toJS(todoStore.list);
+  const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
+
+  const modalVisiblity = useVisibility();
 
   const handleDragEnd = useCallback(
     async ({ data: reorderedData }: { data: Task[] }) => {
@@ -24,9 +29,13 @@ const TodoList = () => {
     [db],
   );
 
-  const handleEdit = (taskId: number) => {
-    Alert.alert('Edit Task', 'Edit functionality here'); // Tahrirlash logikasini bu yerga qo'shishingiz mumkin.
-  };
+  const handleEdit = useCallback(
+    (taskId: number) => {
+      setSelectedTaskId(taskId);
+      modalVisiblity.show();
+    },
+    [modalVisiblity],
+  );
 
   const handleDelete = useCallback(
     async (taskId: number) => {
@@ -61,7 +70,7 @@ const TodoList = () => {
         </RN.TouchableOpacity>
       </>
     ),
-    [handleDelete],
+    [handleDelete, handleEdit],
   );
 
   const renderItem: RenderItem<Task> = useCallback(
@@ -80,6 +89,14 @@ const TodoList = () => {
         renderItem={renderItem}
         keyExtractor={({ id, name }) => `${id} - ${name}`}
         onDragEnd={handleDragEnd}
+      />
+      <Modal
+        isVisible={modalVisiblity.visible}
+        onClose={() => {
+          modalVisiblity.hide();
+          setSelectedTaskId(null);
+        }}
+        taskId={selectedTaskId}
       />
     </RN.View>
   );
