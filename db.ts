@@ -74,6 +74,14 @@ export async function updateTaskPosition(
   await db.runAsync(query, [newPosition, taskId]);
 }
 
+export async function toggleTaskStatus(
+  db: SQLiteDatabase,
+  taskId: number,
+): Promise<void> {
+  const query = 'UPDATE tasks SET isDone = NOT isDone WHERE id = ?;';
+  await db.runAsync(query, [taskId]);
+}
+
 export async function getTasks(db: SQLiteDatabase): Promise<Task[]> {
   const query = 'SELECT * FROM tasks ORDER BY position;';
   const result = await db.getAllAsync(query);

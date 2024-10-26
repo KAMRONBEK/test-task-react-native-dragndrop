@@ -2,7 +2,13 @@ import { SQLiteDatabase } from 'expo-sqlite';
 import { makeAutoObservable } from 'mobx';
 import { Alert } from 'react-native';
 import { Task } from '../@types/todo.types';
-import { addTask, getTasks } from '../db';
+import {
+  addTask,
+  getTasks,
+  updateTaskPosition,
+  deleteTask as dbDeleteTask,
+  toggleTaskStatus,
+} from '../db';
 
 class TodoStore {
   list: Task[] = [];
@@ -12,7 +18,7 @@ class TodoStore {
   }
 
   // Update the task list with a new array
-  private updateList(newList: Task[]) {
+  updateList(newList: Task[]) {
     this.list = newList;
   }
 
@@ -44,7 +50,52 @@ class TodoStore {
       callback?.(); // Call the optional callback if provided
     } catch (error) {
       console.error('[Error-create]:', error);
-      Alert.alert('Opps!', 'Failed to create task. Please try again.');
+      Alert.alert('Oops!', 'Failed to create task. Please try again.');
+    }
+  };
+
+  // Delete a task
+  deleteTask = async (db: SQLiteDatabase, taskId: number) => {
+    try {
+      await dbDeleteTask(db, taskId); // Delete from database
+      // Update the list in the store
+      this.updateList(this.list.filter((task) => task.id !== taskId));
+    } catch (error) {
+      console.error('[Error-deleteTask]:', error);
+      Alert.alert('Oops!', 'Failed to delete task. Please try again.');
+    }
+  };
+
+  // Toggle the isDone status of a task
+  toggleTask = async (db: SQLiteDatabase, taskId: number) => {
+    try {
+      await toggleTaskStatus(db, taskId); // Update in the database
+      // Update the list in the store
+      const updatedList = this.list.map((task) =>
+        task.id === taskId ? { ...task, isDone: Number(!task.isDone) } : task,
+      );
+      this.updateList(updatedList);
+    } catch (error) {
+      console.error('[Error-toggleTask]:', error);
+    }
+  };
+
+  // Update task positions in the database after drag-and-drop
+  updateTaskPositions = async (db: SQLiteDatabase, newOrder: Task[]) => {
+    this.updateList(newOrder); // Update the list in the store with the new order
+
+    try {
+      // Use Promise.all with map to update each task position in the database
+      await Promise.all(
+        newOrder.map((task, index) => updateTaskPosition(db, task.id, index)),
+      );
+      console.log('Positions updated successfully in the database');
+    } catch (error) {
+      console.error('[Error-updateTaskPositions]:', error);
+      Alert.alert(
+        'Oops!',
+        'Failed to update task positions. Please try again.',
+      );
     }
   };
 }

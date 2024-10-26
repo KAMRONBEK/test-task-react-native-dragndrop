@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Task } from '../../@types/todo.types';
 import { addAlpha, COLORS } from '../../constants/colors';
 import RN from '../RN';
+import { todoStore } from '../../store/todo.store';
+import { useSQLiteContext } from 'expo-sqlite';
 
 type ItemProps = {
   item: Task;
@@ -10,24 +12,25 @@ type ItemProps = {
 };
 
 export default function Item({ drag, isActive, item }: ItemProps) {
-  const [isChecked, setIsChecked] = useState(false);
+  const db = useSQLiteContext();
+  const isChecked = useMemo(() => Boolean(item.isDone), [item]);
 
-  const toggleCheckbox = () => {
-    setIsChecked(!isChecked);
-  };
+  const toggleCheckbox = useCallback(() => {
+    todoStore.toggleTask(db, item.id);
+  }, [db, item]);
 
   return (
     <RN.TouchableOpacity
-      style={[styles.container, isActive && styles.activeContainer]} // Change style if active
+      style={[styles.container, isActive && styles.activeContainer]}
       onPress={toggleCheckbox}
-      onLongPress={drag} // Start dragging on long press
-      delayLongPress={100} // Optional: Delay for long press recognition
+      onLongPress={drag}
+      delayLongPress={100}
     >
       <RN.View style={[styles.checkbox, isChecked && styles.checkedCheckbox]}>
         {isChecked && <RN.Text style={styles.checkmark}>{'✓'}</RN.Text>}
       </RN.View>
       <RN.Text style={[styles.text, isChecked && styles.checkedText]}>
-        {item.name} {/* Display task name from item */}
+        {item.name}
       </RN.Text>
     </RN.TouchableOpacity>
   );
@@ -50,7 +53,7 @@ const styles = RN.StyleSheet.create({
     elevation: 4,
   },
   activeContainer: {
-    backgroundColor: addAlpha(COLORS.gray, 0.1), // Change background color when active
+    backgroundColor: addAlpha(COLORS.gray, 0.1),
   },
   checkbox: {
     width: 20,

@@ -1,5 +1,5 @@
-import { useCallback, useEffect } from 'react';
-import { SafeAreaView } from 'react-native';
+import { useEffect } from 'react';
+import { SafeAreaView, StyleSheet } from 'react-native';
 import RN from '../../components/RN';
 import { TodoInput, TodoList } from '../../components/Todo';
 import { observer } from 'mobx-react-lite';
@@ -9,13 +9,18 @@ import { todoStore } from '../../store/todo.store';
 const HomeScreen = () => {
   const db = useSQLiteContext();
 
-  const initialize = useCallback(async () => {
-    todoStore.initialize(db);
+  useEffect(() => {
+    const initialize = async () => {
+      try {
+        await todoStore.initialize(db);
+      } catch (error) {
+        console.error('Error initializing database:', error);
+      }
+    };
+
+    initialize();
   }, [db]);
 
-  useEffect(() => {
-    initialize();
-  }, [initialize]);
   return (
     <SafeAreaView style={styles.safeArea}>
       <RN.View style={styles.container}>
@@ -26,7 +31,7 @@ const HomeScreen = () => {
   );
 };
 
-const styles = RN.StyleSheet.create({
+const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: '#ffffff',
