@@ -1,9 +1,11 @@
 import React, { useCallback, useMemo } from 'react';
-import { Task } from '../../@types/todo.types';
-import { addAlpha, COLORS } from '../../constants/colors';
-import RN from '../RN';
-import { todoStore } from '../../store/todo.store';
 import { useSQLiteContext } from 'expo-sqlite';
+import { todoStore } from '../../../store/todo.store';
+import { Task } from '../../../@types/todo.types';
+import RN from '../../RN';
+import { addAlpha, COLORS } from '../../../constants/colors';
+import { FontAwesome } from '@expo/vector-icons';
+import { Alert } from 'react-native';
 
 type ItemProps = {
   item: Task;
@@ -19,8 +21,28 @@ export default function Item({ drag, isActive, item }: ItemProps) {
     todoStore.toggleTask(db, item.id);
   }, [db, item]);
 
+  const handleEdit = useCallback((task: Task) => {
+    todoStore.showModal(task);
+  }, []);
+
+  const handleDelete = useCallback(
+    async (taskId: number) => {
+      Alert.alert('Delete Task', 'Are you sure you want to delete this task?', [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          onPress: async () => await todoStore.deleteTask(db, taskId),
+        },
+      ]);
+    },
+    [db],
+  );
+
   return (
-    <RN.TouchableOpacity
+    <RN.Pressable
       style={[styles.container, isActive && styles.activeContainer]}
       onPress={toggleCheckbox}
       onLongPress={drag}
@@ -32,7 +54,22 @@ export default function Item({ drag, isActive, item }: ItemProps) {
       <RN.Text style={[styles.text, isChecked && styles.checkedText]}>
         {item.name}
       </RN.Text>
-    </RN.TouchableOpacity>
+
+      <RN.View style={styles.buttonGroup}>
+        <RN.TouchableOpacity
+          style={styles.button}
+          onPress={() => handleEdit(item)}
+        >
+          <FontAwesome name={'edit'} size={24} color={COLORS.gray} />
+        </RN.TouchableOpacity>
+        <RN.TouchableOpacity
+          style={styles.button}
+          onPress={() => handleDelete(item.id)}
+        >
+          <FontAwesome name={'trash'} size={24} color={COLORS.orange} />
+        </RN.TouchableOpacity>
+      </RN.View>
+    </RN.Pressable>
   );
 }
 
@@ -77,10 +114,20 @@ const styles = RN.StyleSheet.create({
   text: {
     fontSize: 16,
     color: COLORS.black,
-    flex: 1,
+    flex: 0.86,
   },
   checkedText: {
     textDecorationLine: 'line-through',
     color: COLORS.gray,
+  },
+  buttonGroup: {
+    position: 'absolute',
+    right: 10,
+    flexDirection: 'row',
+    gap: 10,
+  },
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

@@ -13,7 +13,12 @@ import {
 import { find } from 'lodash';
 
 class TodoStore {
-  public list: Task[] = [];
+  public list: Task[] = []; // todo list
+
+  public modalVisiblity: boolean = false; // (show || hide) modal
+  public selectedTask: Task | null = null; // edit task
+
+  public inputValue: string = '';
 
   constructor() {
     makeAutoObservable(this);
@@ -37,19 +42,15 @@ class TodoStore {
   };
 
   // Create a new task
-  public create = async (
-    { db, newTask }: { db: SQLiteDatabase; newTask: string },
-    callback?: () => void,
-  ) => {
-    if (!newTask.trim()) {
+  public createTask = async (db: SQLiteDatabase) => {
+    if (!this.inputValue) {
       Alert.alert('Oops!', 'Please enter a valid task!');
       return;
     }
 
     try {
-      await addTask(db, newTask);
+      await addTask(db, this.inputValue);
       await this.initialize(db);
-      callback?.(); // Call the optional callback if provided
     } catch (error) {
       console.error('[Error-create]:', error);
       Alert.alert('Oops!', 'Failed to create task. Please try again.');
@@ -69,20 +70,19 @@ class TodoStore {
   };
 
   // Edit a task
-  public editTask = async (
-    db: SQLiteDatabase,
-    taskId: number,
-    updatedName: string,
-  ) => {
-    if (!updatedName.trim()) {
+  public editTask = async (db: SQLiteDatabase) => {
+    if (!this.inputValue.trim()) {
       Alert.alert('Oops!', 'Please enter a valid task!');
       return;
     }
 
+    if (!this.selectedTask) return;
+    const taskId = this.selectedTask.id;
+
     try {
-      await dbEditTask(db, taskId, updatedName);
+      await dbEditTask(db, taskId, this.inputValue);
       const updatedList = this.list.map((task) =>
-        task.id === taskId ? { ...task, name: updatedName } : task,
+        task.id === taskId ? { ...task, name: this.inputValue } : task,
       );
       this.updateList(updatedList);
     } catch (error) {
@@ -116,7 +116,6 @@ class TodoStore {
     this.updateList(newOrder); // Update the list in the store with the new order
 
     try {
-      // Use Promise.all with map to update each task position in the database
       await Promise.all(
         newOrder.map((task, index) => updateTaskPosition(db, task.id, index)),
       );
@@ -128,6 +127,27 @@ class TodoStore {
         'Failed to update task positions. Please try again.',
       );
     }
+  };
+
+  // change input
+  changeInput = (newValue: string) => {
+    this.inputValue = newValue;
+  };
+
+  // modal
+  showModal = (task: Task | null = null) => {
+    this.modalVisiblity = true; // show modal
+    this.selectedTask = task;
+
+    if (this.selectedTask) {
+      this.changeInput(this.selectedTask.name);
+    }
+  };
+
+  hideModal = () => {
+    this.modalVisiblity = false; // hide modal
+    this.selectedTask = null; // clear selected value
+    this.inputValue = ''; // clear input
   };
 }
 

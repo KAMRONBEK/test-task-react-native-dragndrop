@@ -1,3 +1,3 @@
-export { default as TodoInput } from './Input';
-export { default as TodoItem } from './Item';
-export { default as TodoList } from './List';
+export { default as TodoList } from './ui/List';
+export { default as TodoModal } from './ui/Modal';
+export { default as TodoAddButton } from './ui/AddButton';
