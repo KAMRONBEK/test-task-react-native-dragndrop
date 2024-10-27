@@ -4,10 +4,11 @@ import { observer } from 'mobx-react-lite';
 import { useCallback } from 'react';
 import DraggableFlatList, { RenderItem } from 'react-native-draggable-flatlist';
 import { Task } from '../../../@types/todo.types';
-import { normalizeWidth } from '../../../constants/dimensions';
+import { normalizeWidth, SIZES } from '../../../constants/dimensions';
 import { todoStore } from '../../../store/todo.store';
 import RN from '../../RN';
 import Item from './Item';
+import { COLORS } from '../../../constants/colors';
 
 const TodoList = () => {
   const db = useSQLiteContext();
@@ -27,6 +28,17 @@ const TodoList = () => {
     [],
   );
 
+  const renderEmptyComponent = useCallback(
+    () => (
+      <RN.View pt={SIZES.height * 0.45}>
+        <RN.Text style={styles.emptyText}>
+          {'You currently have no tasks.'}
+        </RN.Text>
+      </RN.View>
+    ),
+    [],
+  );
+
   return (
     <RN.View style={styles.container}>
       <DraggableFlatList
@@ -34,6 +46,7 @@ const TodoList = () => {
         renderItem={renderItem}
         keyExtractor={({ id, name }) => `${id} - ${name}`}
         onDragEnd={handleDragEnd}
+        ListEmptyComponent={renderEmptyComponent}
       />
     </RN.View>
   );
@@ -48,6 +61,11 @@ const styles = RN.StyleSheet.create({
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  emptyText: {
+    fontSize: 18,
+    color: COLORS.gray,
+    textAlign: 'center',
   },
 });
 

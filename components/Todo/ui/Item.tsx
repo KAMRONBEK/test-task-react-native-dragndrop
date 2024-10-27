@@ -27,7 +27,7 @@ export default function Item({ drag, isActive, item }: ItemProps) {
 
   const handleDelete = useCallback(
     async (taskId: number) => {
-      Alert.alert('Delete Task', 'Are you sure you want to delete this task?', [
+      Alert.alert('Delete Task', 'Are you sure you wanna delete this task?', [
         {
           text: 'Cancel',
           style: 'cancel',
