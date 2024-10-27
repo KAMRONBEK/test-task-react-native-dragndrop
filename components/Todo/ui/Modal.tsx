@@ -7,6 +7,7 @@ import { addAlpha, COLORS } from '../../../constants/colors';
 import { todoStore } from '../../../store/todo.store';
 import RN from '../../RN';
 import { isEmpty } from 'lodash';
+import { isAndroid } from '../../../constants/platform';
 
 const Modal = () => {
   const {
@@ -60,7 +61,7 @@ const Modal = () => {
       onBackdropPress={hideModal}
     >
       <BlurView
-        intensity={10}
+        intensity={isAndroid ? 100 : 10}
         tint={'light'}
         style={[RN.StyleSheet.absoluteFill, styles.fullscreenBlur]}
       />
